@@ -65,5 +65,11 @@ jobs:
           EB_ENV_NAME: ${{ secrets.EB_ENV_NAME }}
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
         run: |
-          aws elasticbeanstalk create-application-version --application-name ${{ secrets.EB_APP_NAME }} --version-label $GITHUB_SHA --source-bundle S3Bucket=${{ secrets.S3_BUCKET_NAME }},S3Key=latcicd.zip
-          aws elasticbeanstalk update-environment --environment-name ${{ secrets.EB_ENV_NAME }} --version-label $GITHUB_SHA
+          VERSION_LABEL="${{ github.sha }}-$(date +%s)"
+          aws elasticbeanstalk create-application-version \
+            --application-name ${{ secrets.EB_APP_NAME }} \
+            --version-label $VERSION_LABEL \
+            --source-bundle S3Bucket=${{ secrets.S3_BUCKET_NAME }},S3Key=latcicd.zip
+          aws elasticbeanstalk update-environment \
+            --environment-name ${{ secrets.EB_ENV_NAME }} \
+            --version-label $VERSION_LABEL
